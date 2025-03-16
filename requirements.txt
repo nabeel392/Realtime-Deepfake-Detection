@@ -1,0 +1,15 @@
+# General dependencies
+av
+albumentations
+ffmpeg
+jupyter
+numpy
+opencv-python
+pip
+torch
+torchvision
+tqdm
+pandas
+tensorboardx==2.0
+efficientnet-pytorch
+scikit-learn
