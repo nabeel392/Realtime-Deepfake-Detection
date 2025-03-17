@@ -1,13 +1,13 @@
 [phases.setup]
-nixPkgs = ['rustup', 'gcc', 'python310']
+nixPkgs = ['rustup', 'gcc', 'python310', 'python310Packages.pip', 'python310Packages.virtualenv']
 
 [phases.install]
 cmds = [
   'rustup default stable',
-  'python -m ensurepip --upgrade',
-  'python -m pip install --upgrade pip',
-  'python -m pip install -r requirements.txt'
+  'virtualenv /tmp/venv',
+  'source /tmp/venv/bin/activate',
+  'pip install --no-cache-dir -r requirements.txt'
 ]
 
 [start]
-cmd = 'python app.py'
+cmd = 'source /tmp/venv/bin/activate && python app.py'
