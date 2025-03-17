@@ -4,10 +4,9 @@ nixPkgs = ['rustup', 'gcc', 'python310', 'python310Packages.pip', 'python310Pack
 [phases.install]
 cmds = [
   'rustup default stable',
-  'virtualenv /tmp/venv',
-  'source /tmp/venv/bin/activate',
-  'pip install --no-cache-dir -r requirements.txt'
+  'python -m venv /app/venv',  # Create a virtual environment
+  '/app/venv/bin/pip install --no-cache-dir -r requirements.txt'  # Install dependencies
 ]
 
 [start]
-cmd = 'source /tmp/venv/bin/activate && python app.py'
+cmd = '/app/venv/bin/python app.py'
