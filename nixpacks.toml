@@ -1,0 +1,11 @@
+[phases.setup]
+nixPkgs = ['rustup', 'gcc']
+
+[phases.install]
+cmds = [
+  'rustup default stable',
+  'pip install -r requirements.txt'
+]
+
+[start]
+cmd = 'python app.py'
