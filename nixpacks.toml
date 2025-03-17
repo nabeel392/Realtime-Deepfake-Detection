@@ -1,10 +1,12 @@
 [phases.setup]
-nixPkgs = ['rustup', 'gcc']
+nixPkgs = ['rustup', 'gcc', 'python310']
 
 [phases.install]
 cmds = [
   'rustup default stable',
-  'pip install -r requirements.txt'
+  'python -m ensurepip --upgrade',
+  'python -m pip install --upgrade pip',
+  'python -m pip install -r requirements.txt'
 ]
 
 [start]
