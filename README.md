@@ -46,8 +46,7 @@ pip install -r requirements.txt
 ## Usage
 ### **1. Start the Backend**
 ```sh
-python app.py  for recorded videos
-python Livedetection.py   for streaming
+python Register.py
 ```
 By default, the backend runs on **http://localhost:5000**.
 
