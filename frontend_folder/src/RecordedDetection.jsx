@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+
 
 function RecordedDetection() {
   const [videoFile, setVideoFile] = useState(null);
@@ -8,6 +11,9 @@ function RecordedDetection() {
   const [confidence, setConfidence] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
+  const navigate = useNavigate(); // Used for navigation
+  const user = JSON.parse(localStorage.getItem("user"));
+
   // Function to handle file input change
   const onFileChange = (event) => {
     setVideoFile(event.target.files[0]);
@@ -15,6 +21,11 @@ function RecordedDetection() {
 
   // Function to handle file upload to backend
   const onFileUpload = async () => {
+    if (!user) {
+      toast.error("Please log in first.");
+      navigate("/login", { state: { from: "/pre-recorded" } });
+      return;
+    }
     if (!videoFile) {
       alert("Please select a video file first.");
       return;

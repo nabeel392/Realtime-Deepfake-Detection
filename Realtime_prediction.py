@@ -5,6 +5,7 @@ from scipy.special import expit
 from blazeface import BlazeFace
 from architectures import fornet, weights
 from isplutils import utils
+import mediapipe as mp  # Import mediapipe
 
 # ## Parameters
 net_model = 'EfficientNetAutoAttB4'
@@ -25,7 +26,19 @@ facedet = BlazeFace().to(device)
 facedet.load_weights("blazeface/blazeface.pth")
 facedet.load_anchors("blazeface/anchors.npy")
 
+mp_face_mesh = mp.solutions.face_mesh
+face_mesh = mp_face_mesh.FaceMesh(max_num_faces=1, refine_landmarks=True, min_detection_confidence=0.5, min_tracking_confidence=0.5)
+mp_drawing = mp.solutions.drawing_utils
+drawing_spec = mp_drawing.DrawingSpec(thickness=1, circle_radius=1)
+
 # ## Function to classify a single frame
+def align_face(frame_rgb, landmarks):
+    h, w, _ = frame_rgb.shape
+    x1, y1 = np.min(landmarks[:, :2], axis=0).astype(int)
+    x2, y2 = np.max(landmarks[:, :2], axis=0).astype(int)
+    x1, y1, x2, y2 = max(0, x1), max(0, y1), min(w, x2), min(h, y2)
+    return frame_rgb[y1:y2, x1:x2]
+
 def classify_frame(frame_rgb):
 
     # Resize frame to 128x128 for BlazeFace
@@ -64,6 +77,6 @@ def classify_frame(frame_rgb):
 
     # Compute classification
     avg_score = expit(face_pred.mean())
-    classification = "REAL" if avg_score < 0.35 else "FAKE"
+    classification = "REAL" if avg_score < 0.7 else "FAKE"
 
     return frame_rgb, classification, avg_score

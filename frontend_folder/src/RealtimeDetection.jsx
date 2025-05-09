@@ -1,13 +1,26 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const RealtimeDetection = () => {
   const [showLive, setShowLive] = useState(false);
   const [stream, setStream] = useState(null);
   const [classification, setClassification] = useState("Waiting...");
   const [avgScore, setAvgScore] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
+    const user = localStorage.getItem("user");
+    if (!user) {
+      toast.error("Please login first");
+      navigate("/login");
+    }
+  }, [navigate]);
+
+
+  useEffect(() => {
+    
     if (showLive) {
       const interval = setInterval(() => {
         fetchResult();
