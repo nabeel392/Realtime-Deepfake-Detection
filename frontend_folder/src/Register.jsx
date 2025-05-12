@@ -37,7 +37,7 @@ const Register = () => {
 
       if (response.ok) {
         toast.success('Registration successful! Please log in.');
-        navigate('/login'); // redirect to login page
+        navigate('/login');
       } else {
         setError(data.error || 'Registration failed. Please try again.');
       }
@@ -48,9 +48,9 @@ const Register = () => {
   };
 
   return (
-    <div className="select-none flex flex-col items-center justify-center min-h-screen bg-slate-200 text-blue-900 px-4">
+    <div className="select-none flex flex-col items-center justify-center min-h-screen bg-red-800 text-white px-4">
       <h2 className="text-3xl font-bold mb-6">Register</h2>
-      <div className="w-full max-w-md bg-white shadow-md rounded-lg px-8 pt-6 pb-8 mb-4">
+      <div className="w-full max-w-md bg-white text-gray-800 shadow-md rounded-lg px-8 pt-6 pb-8 mb-4">
         {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
         <form onSubmit={handleRegister}>
           <div className="mb-4">
@@ -112,7 +112,7 @@ const Register = () => {
           <div className="flex items-center justify-center">
             <button
               type="submit"
-              className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              className="bg-red-800 hover:bg-red-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             >
               Register
             </button>
@@ -120,7 +120,7 @@ const Register = () => {
         </form>
         <p className="text-center text-gray-500 text-xs mt-4">
           Already have an account?{' '}
-          <Link to="/login" className="font-semibold text-green-500 hover:text-green-800">
+          <Link to="/login" className="font-semibold text-red-600 hover:text-red-800">
             Login
           </Link>
         </p>

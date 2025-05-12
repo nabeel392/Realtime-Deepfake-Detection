@@ -26,8 +26,8 @@ const Navbar = () => {
   }, []);
 
   return (
-    <nav className="bg-blue-900 shadow-md px-6 py-4 flex justify-between items-center">
-      <Link to="/" className="text-xl font-bold text-white">Deepfake Detector</Link>
+    <nav className="bg-white px-6 py-4 flex justify-between items-center border-b-4 border-red-800">
+      <Link to="/" className="text-xl font-bold text-red-800">Deepfake Detector</Link>
 
       <div className="flex space-x-4 items-center relative">
 
@@ -35,23 +35,23 @@ const Navbar = () => {
           <div className="relative" ref={dropdownRef}>
             <button
               onClick={() => setShowDropdown(!showDropdown)}
-              className="flex items-center space-x-2 hover:text-white focus:outline-none"
+              className="flex items-center space-x-2 hover:text-red-800 focus:outline-none"
             >
-              <UserCircleIcon className="w-6 h-6 text-white" />
-              <span className="font-medium hidden text-white sm:inline">Hi, {user.name}</span>
+              <UserCircleIcon className="w-6 h-6 text-red-800" />
+              <span className="font-medium hidden text-red-800 sm:inline">Hi, {user.name}</span>
             </button>
             {showDropdown && (
-              <div className="absolute right-0 mt-2 w-40 bg-white border rounded shadow-md z-50">
+              <div className="absolute right-0 mt-2 w-40 bg-white border-red-800 rounded shadow-md z-50">
                 <Link
                   to="/profile"
-                  className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
+                  className="block px-4 py-2 text-red-800 hover:bg-red-100"
                   onClick={() => setShowDropdown(false)}
                 >
                   Profile
                 </Link>
                 <button
                   onClick={handleLogout}
-                  className="w-full text-left px-4 py-2 text-red-600 hover:bg-gray-100"
+                  className="w-full text-left px-4 py-2 text-white bg-red-800 hover:bg-red-900"
                 >
                   Logout
                 </button>
@@ -60,8 +60,8 @@ const Navbar = () => {
           </div>
         ) : (
           <>
-            <Link to="/login" className="text-white hover:underline font-bold">Login</Link>
-            <Link to="/register" className="text-white hover:underline font-bold">Register</Link>
+            <Link to="/login" className="bg-red-800 text-white px-4 py-2 rounded font-bold hover:bg-red-600 transition duration-200">Login</Link>
+            <Link to="/register" className="bg-red-800 text-white px-4 py-2 rounded font-bold hover:bg-red-600 transition duration-200">Register</Link>
           </>
         )}
       </div>

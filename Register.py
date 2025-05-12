@@ -18,6 +18,7 @@ CORS(app, origins=["http://localhost:3000"], supports_credentials=True)
 client = MongoClient("mongodb+srv://shuja:satti@cluster0.snkljxc.mongodb.net/")
 db = client['video-stream']
 users_collection = db['users']
+feedback_collection = db['feedback']
 
 # ---------- Video Upload Setup ----------
 UPLOAD_FOLDER = "samples"
@@ -60,7 +61,7 @@ def register():
 
     # Save user to DB
     hashed_pw = hash_password(password)
-    users_collection.insert_one({
+    result = users_collection.insert_one({
         "email": email,
         "username": username,
         "password": hashed_pw
@@ -68,8 +69,35 @@ def register():
 
     return jsonify({
         "message": "Registration successful",
-        "user": { "name": username, "email": email }  # ✅ send user back
+        "user": { 
+            "id": str(result.inserted_id),
+            "name": username,
+            "email": email }  # ✅ send user back
     }), 201
+
+# ---------------- save feedback Endpoint ----------------
+
+@app.route("/feedback", methods=["POST"])
+def feedback():
+    data = request.get_json()
+    print("Received feedback data:", data)
+
+    user_id = data.get("userId")
+    feedback_text = data.get("feedback")
+    video_path = data.get("videoPath")
+
+    if not user_id or not feedback_text:
+        return jsonify({"error": "userId and feedback are required"}), 400
+
+    feedback_collection.insert_one({
+        "userId": user_id,
+        "message": feedback_text,
+        "video": video_path
+    })
+
+    return jsonify({"message": "Feedback submitted successfully"}), 201
+
+
 
 # ---------------- Login Endpoint ----------------
 @app.route("/login", methods=["POST"])
@@ -85,7 +113,10 @@ def login():
     if user and user["password"] == hash_password(password):
        return jsonify({
         "message": "Login successful",
-        "user": { "name": user['username'], "email": user['email'] }  # ✅ send user back
+        "user": {
+                "id": str(user["_id"]),
+                "name": user['username'],
+                "email": user['email'] }  # ✅ send user back
     }), 200
     else:
         return jsonify({"error": "Invalid email or password"}), 401
