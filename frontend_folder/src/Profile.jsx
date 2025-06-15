@@ -1,36 +1,48 @@
 import React, { useEffect, useState } from "react";
 
 function Profile() {
-  const [user, setUser] = useState(null);
+  const [data, setData] = useState(null);
+  const [role, setRole] = useState(null); // 'user' or 'admin'
 
   useEffect(() => {
-    // Fetch user from localStorage (assuming it's stored as JSON string)
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
+    const adminData = localStorage.getItem("admin");
+    const userData = localStorage.getItem("user");
+
+    // Prefer admin if both are accidentally present
+    if (adminData) {
       try {
-        setUser(JSON.parse(storedUser));
-      } catch (e) {
-        console.error("Failed to parse user from localStorage", e);
+        setData(JSON.parse(adminData));
+        setRole("admin");
+      } catch (err) {
+        console.error("Error parsing admin data", err);
+      }
+    } else if (userData) {
+      try {
+        setData(JSON.parse(userData));
+        setRole("user");
+      } catch (err) {
+        console.error("Error parsing user data", err);
       }
     }
   }, []);
 
-  if (!user) {
+  if (!data) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-100">
-        <p className="text-gray-600 text-lg">No user data found.</p>
+      <div className="flex items-center justify-center min-h-screen bg-red-800">
+        <p className="text-white text-lg">No profile data found.</p>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-6">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-red-800 p-6">
       <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-md">
-        <h1 className="text-2xl font-bold mb-4 text-center text-blue-900">User Profile</h1>
+        <h1 className="text-2xl font-bold mb-4 text-center text-red-600">
+          {role === "admin" ? "Admin Profile" : "User Profile"}
+        </h1>
         <div className="space-y-3">
-          <p><strong>Name:</strong> {user.name}</p>
-          <p><strong>Email:</strong> {user.email}</p>
-          {/* Add other fields if needed */}
+          <p><strong>Name:</strong> {data.name}</p>
+          <p><strong>Email:</strong> {data.email}</p>
         </div>
       </div>
     </div>

@@ -6,9 +6,9 @@ from flask import Flask, jsonify, request, send_from_directory, render_template,
 import os
 from oldVideoprediction import classify_video
 from flask import send_from_directory
-from oldVideoprediction import classify_video
 import cv2
 from Realtime_prediction import classify_frame
+
 
 app = Flask(__name__)
 CORS(app, origins=["http://localhost:3000"], supports_credentials=True)
@@ -19,6 +19,7 @@ client = MongoClient("mongodb+srv://shuja:satti@cluster0.snkljxc.mongodb.net/")
 db = client['video-stream']
 users_collection = db['users']
 feedback_collection = db['feedback']
+admin_collection = db['admins']
 
 # ---------- Video Upload Setup ----------
 UPLOAD_FOLDER = "samples"
@@ -36,6 +37,8 @@ def allowed_file(filename):
 # Utility: Hash passwords securely
 def hash_password(password):
     return hashlib.sha256(password.encode()).hexdigest()
+
+
 
 # ---------------- Register Endpoint ----------------
 @app.route("/register", methods=["POST"])
@@ -72,7 +75,7 @@ def register():
         "user": { 
             "id": str(result.inserted_id),
             "name": username,
-            "email": email }  # ✅ send user back
+            "email": email }  
     }), 201
 
 # ---------------- save feedback Endpoint ----------------
@@ -116,7 +119,7 @@ def login():
         "user": {
                 "id": str(user["_id"]),
                 "name": user['username'],
-                "email": user['email'] }  # ✅ send user back
+                "email": user['email'] }  
     }), 200
     else:
         return jsonify({"error": "Invalid email or password"}), 401
@@ -250,6 +253,109 @@ def serve_video(filename):
 @app.route("/samples/thumbnails/<filename>")
 def serve_thumbnail(filename):
     return send_from_directory("samples/thumbnails", filename)
+
+# ---------- Admin Login ----------
+
+@app.route("/admin/login", methods=["POST"])
+def admin_login():
+    data = request.get_json()
+    email = data.get("email")
+    password = data.get("password")
+
+    admin = admin_collection.find_one({"email": email})
+    if admin and admin["password"] == hash_password(password):
+        return jsonify({
+        "id": str(admin["_id"]),
+        "name": admin["name"],
+        "email": admin["email"],
+        "isAdmin": True
+    }), 200
+    else:
+        return jsonify({"error": "Invalid email or password"}), 401
+
+
+
+# ---------- Admin Register ----------
+
+@app.route("/admin/register", methods=["POST"])
+def admin_register():
+    data = request.get_json()
+    email = data.get("email")
+    password = data.get("password")
+    name = data.get("name")
+
+    if not email or not password or not name:
+        return jsonify({"error": "All fields are required"}), 400
+
+    if admin_collection.find_one({"email": email}):
+        return jsonify({"error": "Admin already exists"}), 400
+
+    hashed_pwd = hash_password(password)
+
+    result = admin_collection.insert_one({
+        "email": email,
+        "name": name,
+        "password": hashed_pwd,
+        "isAdmin": True
+    })
+
+    return jsonify({"message": "Admin registered", "id": str(result.inserted_id)}), 201
+
+
+# ---------- Admin Dashboard Stats ----------
+
+@app.route("/admin/stats", methods=["GET"])
+def admin_stats():
+    try:
+        user_count = users_collection.count_documents({})
+        feedback_count = feedback_collection.count_documents({})
+        
+        # Count number of video files in the folder
+        video_folder = "samples"
+        allowed_extensions = {".mp4", ".avi", ".mov", ".mkv"}
+        video_count = len([
+            file for file in os.listdir(video_folder)
+            if os.path.isfile(os.path.join(video_folder, file)) and os.path.splitext(file)[1].lower() in allowed_extensions
+        ])
+
+        return jsonify({
+            "users": user_count,
+            "feedbacks": feedback_count,
+            "videos": video_count
+        }), 200
+    
+    except Exception as e:
+        return jsonify({"error": f"Failed to fetch stats: {str(e)}"}), 500
+    
+
+
+# ---------- Admin Dashboard management ----------
+
+
+@app.route("/api/admin/users", methods=["GET"])
+def get_all_users():
+    users = list(users_collection.find({}, {"password": 0}))
+    for user in users:
+        user["_id"] = str(user["_id"])
+    return jsonify(users)
+
+
+
+@app.route("/admin/feedbacks", methods=["GET"])
+def get_all_feedback():
+    feedbacks = list(feedback_collection.find())
+    for fb in feedbacks:
+        fb["_id"] = str(fb["_id"])
+    return jsonify(feedbacks)
+
+
+@app.route("/admin/videos", methods=["GET"])
+def get_all_videos():
+    folder_path = "samples"
+    videos = [f for f in os.listdir(folder_path) if f.endswith((".mp4", ".mov", ".avi"))]
+    return jsonify(videos)
+
+
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=5000)

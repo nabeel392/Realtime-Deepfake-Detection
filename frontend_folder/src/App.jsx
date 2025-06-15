@@ -18,8 +18,14 @@ import "react-toastify/dist/ReactToastify.css";
 import { UserProvider, useUser } from "./UserContext";
 import VideoDetail from "./VideoDetail";
 import Profile from "./Profile";
+import AdminLogin from "./AdminLogin";
+import AdminRegister from "./AdminRegister";
+import AdminDashboard from "./AdminDashboard";
+import AdminUsers from "./ManageUsers";
+import AdminFeedbacks from "./ManageFeedbacks";
+import AdminVideos from "./ManageVideos";
 
-// Component wrapper for protected routes (such as login/register)
+
 // Redirects authenticated users to the homepage if they try to access login/register
 const PublicRoute = ({ children }) => {
   const { user } = useUser();
@@ -41,6 +47,11 @@ const PrivateRoute = ({ children }) => {
   }
 
   return children;
+};
+
+const AdminPrivateRoute = ({ children }) => {
+  const admin = JSON.parse(localStorage.getItem("admin"));
+  return admin ? children : <Navigate to="/admin/login" replace />;
 };
 
 function AppRoutes() {
@@ -77,6 +88,42 @@ function AppRoutes() {
           </PublicRoute>
         }
       />
+
+      <Route path="/admin/register" element={<AdminRegister />} />
+      <Route path="/admin/login" element={<AdminLogin />} />
+      <Route
+      path="/admin/dashboard"
+      element={
+      <AdminPrivateRoute>
+        <AdminDashboard />
+      </AdminPrivateRoute>
+      }
+    />
+    <Route
+      path="/admin/profile"
+      element={
+        <AdminPrivateRoute>
+          <Profile />
+        </AdminPrivateRoute>
+      }
+      />
+
+      <Route path="/admin/users" element={
+        <AdminPrivateRoute>
+        <AdminUsers />
+        </AdminPrivateRoute>
+        } />
+      <Route path="/admin/feedbacks" element={
+        <AdminPrivateRoute>
+        <AdminFeedbacks />
+        </AdminPrivateRoute>
+        } />
+      <Route path="/admin/videos" element={
+        <AdminPrivateRoute>
+        <AdminVideos />
+        </AdminPrivateRoute>
+        } />
+
     </Routes>
   );
 }

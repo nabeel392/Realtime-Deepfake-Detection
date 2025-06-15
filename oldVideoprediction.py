@@ -41,6 +41,13 @@ def classify_video(video_path):
     # Detect faces from the video
     vid_faces = face_extractor.process_video(video_path)
 
+    face_frames = [frame['faces'][0] for frame in vid_faces if len(frame['faces']) > 0]
+
+        # If no faces detected
+    if not face_frames:
+        print("No faces detected in video.")
+        return None, "No Face Detected", 0.0
+
     # Extract faces and apply transformations
     faces_t = torch.stack([transf(image=frame['faces'][0])['image'] for frame in vid_faces if len(frame['faces'])])
 

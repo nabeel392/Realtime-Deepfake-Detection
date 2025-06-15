@@ -5,7 +5,7 @@ from scipy.special import expit
 from blazeface import BlazeFace
 from architectures import fornet, weights
 from isplutils import utils
-import mediapipe as mp  # Import mediapipe
+import mediapipe as mp
 
 # ## Parameters
 net_model = 'EfficientNetAutoAttB4'
