@@ -6,7 +6,7 @@ const AdminVideos = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios.get('http://localhost:5000/admin/videos') // Use full backend URL
+    axios.get('http://localhost:5000/admin/videos')
       .then(res => {
         if (Array.isArray(res.data)) {
           setVideos(res.data);
@@ -27,16 +27,18 @@ const AdminVideos = () => {
     <div className="min-h-screen bg-gray-100 p-10">
       <h2 className="text-2xl font-bold text-center mb-6">All Uploaded Videos</h2>
       <div className="overflow-x-auto">
-        <table className="w-full bg-white rounded-lg shadow">
+        <table className="w-full bg-white rounded-lg shadow border-2">
           <thead>
-            <tr className="bg-red-800 text-white">
+            <tr className="bg-red-800 text-white text-center">
+              <th className="p-3">Sr</th>
               <th className="p-3">Video Preview</th>
               <th className="p-3">File Name</th>
             </tr>
           </thead>
           <tbody>
             {videos.map((video, index) => (
-              <tr key={index} className="border-b hover:bg-gray-100">
+              <tr key={index} className="border-2 hover:bg-gray-100 text-center">
+                <td className="p-3">{index + 1}</td>
                 <td className="p-3">
                   <video
                     src={`http://localhost:5000/samples/${video}`}

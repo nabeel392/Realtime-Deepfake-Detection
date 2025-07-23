@@ -31,16 +31,18 @@ const AdminFeedbacks = () => {
     <div className="min-h-screen bg-gray-100 p-10">
       <h2 className="text-2xl font-bold text-center mb-6">All Registered Users</h2>
       <div className="overflow-x-auto">
-        <table className="w-full bg-white rounded-lg shadow">
+        <table className="w-full bg-white rounded-lg shadow border-2 text-center">
           <thead>
             <tr className="bg-red-800 text-white">
+              <th className="p-3">Sr</th>
               <th className="p-3">Feedback</th>
-              <th className="p-3">Video</th>
+              <th className="p-3">Video Name</th>
             </tr>
           </thead>
           <tbody>
-            {feedbacks.map(feedback => (
-              <tr key={feedback.userId} className="border-b hover:bg-gray-100">
+            {feedbacks.map((feedback,index) => (
+              <tr key={feedback.userId} className="border-2 hover:bg-gray-100 text-center">
+                <td className="p-3">{index + 1}</td>
                 <td className="p-3">{feedback.message}</td>
                 <td className="p-3">{feedback.video}</td>
               </tr>

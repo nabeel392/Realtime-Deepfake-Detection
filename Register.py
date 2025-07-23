@@ -332,7 +332,7 @@ def admin_stats():
 # ---------- Admin Dashboard management ----------
 
 
-@app.route("/api/admin/users", methods=["GET"])
+@app.route("/admin/users", methods=["GET"])
 def get_all_users():
     users = list(users_collection.find({}, {"password": 0}))
     for user in users:
